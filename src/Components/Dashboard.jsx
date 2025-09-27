@@ -8,7 +8,7 @@ const Dashboard = () => {
 const userId=localStorage.getItem("userId")
   // Sync with localStorage whenever expenses update
   useEffect(() => {
-    fetch(`http://localhost:3000/apis/read?userId=${userId}`)
+    fetch(`https://smart-expense-tracker-server-726b.onrender.com/apis/read?userId=${userId}`)
     .then(res=>res.json())
     .then(msg=>setExpenses(msg.data.reverse()))
   
@@ -34,7 +34,7 @@ const userId=localStorage.getItem("userId")
   // Handle delete
   const handleDelete = (id) => {
   try {
-    fetch(`http://localhost:3000/apis/remove/${id}`, {
+    fetch(`https://smart-expense-tracker-server-726b.onrender.com/apis/remove/${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body:JSON.stringify({userId})
