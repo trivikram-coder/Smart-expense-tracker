@@ -5,7 +5,7 @@ import Dashboard from "./Components/Dashboard";
 import ChatBot from "./Components/ChatBot";
 import Account from "./Components/Account";
 import Authentication from "./Components/Authentication";
-
+import {ToastContainer} from 'react-toastify'
 // Helper: check if user is logged in
 const isLoggedIn = () => !!localStorage.getItem("userId");
 
@@ -16,6 +16,20 @@ const ProtectedRoute = ({ children }) => {
 
 const App = () => {
   return (
+    <>
+  <ToastContainer
+        position="top-right"
+        autoClose={2000} // Close after 5 seconds
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false} // Right-to-left support
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        // Add a transition effect
+      />
     <Router>
       <Routes>
         {/* Public route */}
@@ -65,6 +79,7 @@ const App = () => {
         />
       </Routes>
     </Router>
+    </>
   );
 };
 

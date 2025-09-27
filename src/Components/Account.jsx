@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const Account = () => {
   const storedUserId = localStorage.getItem("userId"); // get logged-in user ID
@@ -78,7 +79,9 @@ const Account = () => {
 
   // Logout user
   const handleLogout = () => {
-    localStorage.removeItem("userId"); // clear stored user
+    localStorage.removeItem("userId");
+    toast.success("You logged out")
+     // clear stored user
     setUser(null);
   };
 

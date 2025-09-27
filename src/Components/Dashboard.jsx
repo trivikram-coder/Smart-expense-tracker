@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PieChart from "./PieChart";
 import BarChart from "./BarChart";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
@@ -43,6 +44,7 @@ const userId=localStorage.getItem("userId")
         console.log(data.message);
         // Update UI
         setExpenses(prev => prev.filter(exp => exp._id !== id));
+        toast.success("Deleted expense")
       });
   } catch (error) {
     console.log(error);
@@ -54,7 +56,7 @@ const userId=localStorage.getItem("userId")
     <div className="bg-gray-100 min-h-screen font-sans p-6">
       <div className="bg-white shadow-xl rounded-lg p-6 md:p-10 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">
-          Smart Expense Tracker
+          Smart Expense Tracker Dashboard
         </h1>
 
         {/* Expenses Table */}

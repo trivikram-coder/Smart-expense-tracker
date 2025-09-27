@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const Authentication = () => {
   const [isLogin, setIsLogin] = useState(true); // toggle between login & register
@@ -39,7 +40,12 @@ const Authentication = () => {
         // store userId in localStorage
         localStorage.setItem("userId", data.user.id);
         // Optionally redirect to dashboard
-        window.location.href = "/dashboard";
+        const msg = isLogin ? "Login" : "Register";
+        toast.success(msg + " successfully");
+      setTimeout(() => {
+  window.location.href = "/dashboard";
+}, 1500);
+       
       } else {
         setMessage(data.message || "Error occurred");
       }

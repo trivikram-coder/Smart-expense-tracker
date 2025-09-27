@@ -34,7 +34,7 @@ const ChatBot = () => {
 
       if (response.ok) {
         const res = await response.json(); // e.g., "Added 400 on Food"
-        console.log(res)
+        
         setMessages((prev) => [...prev, { sender: 'bot', text: res.message }]);
         
       }
