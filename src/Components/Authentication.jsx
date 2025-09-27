@@ -9,7 +9,7 @@ const Authentication = () => {
     password: "",
   });
   const[showPassword,setShowPassword]=useState(false)
-  const [message, setMessage] = useState("");
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,7 +36,7 @@ const Authentication = () => {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage(data.message);
+       
         // store userId in localStorage
         localStorage.setItem("userId", data.user.id);
         // Optionally redirect to dashboard
@@ -47,11 +47,11 @@ const Authentication = () => {
 }, 1500);
        
       } else {
-        setMessage(data.message || "Error occurred");
+        toast.success(data.message || "Error occurred");
       }
     } catch (err) {
       console.error(err);
-      setMessage("Server error");
+      toast.error("Server error");
     }
   };
 
@@ -62,10 +62,7 @@ const Authentication = () => {
           {isLogin ? "Login" : "Register"}
         </h2>
 
-        {message && (
-          <p className="text-center text-red-500 mb-4">{message}</p>
-        )}
-
+        
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {!isLogin && (
             <input
