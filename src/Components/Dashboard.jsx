@@ -10,7 +10,7 @@ const userId=localStorage.getItem("userId")
   useEffect(() => {
     fetch(`https://smart-expense-tracker-server-726b.onrender.com/apis/read?userId=${userId}`)
     .then(res=>res.json())
-    .then(msg=>setExpenses(msg.data.reverse()))
+    .then(msg=>setExpenses(msg.data))
   
   }, []);
 
