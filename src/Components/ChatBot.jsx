@@ -23,7 +23,7 @@ const ChatBot = () => {
    
     const userId=localStorage.getItem("userId")
     try {
-      const response = await fetch('https://smart-expense-tracker-server-726b.onrender.com/apis/add', {
+      const response = await fetch('https://smart-expense-tracker-server-1.onrender.com/apis/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
