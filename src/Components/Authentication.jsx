@@ -113,7 +113,7 @@ const Authentication = () => {
 
         <p className="text-center mt-4 text-gray-600">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <span
+          <button
             className="text-blue-500 cursor-pointer hover:underline"
             onClick={() => {
               setIsLogin(!isLogin);
@@ -121,7 +121,7 @@ const Authentication = () => {
             }}
           >
             {isLogin ? "Register" : "Login"}
-          </span>
+          </button>
         </p>
       </div>
     </div>
