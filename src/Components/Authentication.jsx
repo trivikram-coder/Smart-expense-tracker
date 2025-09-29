@@ -114,7 +114,7 @@ const Authentication = () => {
         <p className="text-center mt-4 text-gray-600 cursor-pointer">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
-            className="text-blue-500 cursor-pointer hover:underline"
+            className="text-blue-500  hover:underline cursor-pointer"
             onClick={() => {
               setIsLogin(!isLogin);
               setMessage("");

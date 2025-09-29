@@ -99,10 +99,10 @@ const userId=localStorage.getItem("userId")
                         <td className="px-6 py-4 text-sm text-gray-800">
                           {exp.date}
                         </td>
-                        <td className="px-6 py-4 text-right text-sm font-medium">
+                        <td className="px-6 py-4 text-right text-sm font-medium ">
                           <button
                             onClick={() => handleDelete(exp._id)}
-                            className="text-red-600 hover:text-red-900"
+                            className="text-red-600 hover:text-red-900 cursor-pointer"
                           >
                             ❌
                           </button>
