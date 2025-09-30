@@ -6,6 +6,7 @@ import ChatBot from "./Components/ChatBot";
 import Account from "./Components/Account";
 import Authentication from "./Components/Authentication";
 import {ToastContainer} from 'react-toastify'
+import ForgetPass from "./Components/ForgetPass";
 // Helper: check if user is logged in
 const isLoggedIn = () => !!localStorage.getItem("userId");
 
@@ -69,6 +70,11 @@ const App = () => {
                         </ProtectedRoute>
                       }
                     />
+                    <Route path="/forget" element={
+                      <ProtectedRoute>
+                      <ForgetPass/>
+                      </ProtectedRoute>
+                      }/>
                   </Routes>
                 </div>
               </div>
@@ -76,6 +82,7 @@ const App = () => {
               <Navigate to="/auth" replace />
             )
           }
+          
         />
       </Routes>
     </Router>
