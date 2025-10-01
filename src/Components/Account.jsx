@@ -140,7 +140,7 @@ const Account = () => {
         <div className="flex gap-2 mt-4">
           <button
             onClick={handleUpdate}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition cursor-pointer"
           >
             Save
           </button>
@@ -150,7 +150,7 @@ const Account = () => {
               setFormData({ name: user.name, email: user.email });
               setError("");
             }}
-            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
+            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition cursor-pointer"
           >
             Cancel
           </button>

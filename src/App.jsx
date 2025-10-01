@@ -7,6 +7,7 @@ import Account from "./Components/Account";
 import Authentication from "./Components/Authentication";
 import {ToastContainer} from 'react-toastify'
 import ForgetPass from "./Components/ForgetPass";
+import ChangePassword from "./Components/ChangePassword";
 // Helper: check if user is logged in
 const isLoggedIn = () => !!localStorage.getItem("userId");
 
@@ -35,7 +36,8 @@ const App = () => {
       <Routes>
         {/* Public route */}
         <Route path="/auth" element={<Authentication />} />
-
+        <Route path="/forget" element={<ForgetPass/>}/>
+        <Route path="/changePass" element={<ChangePassword/>}/>
         {/* Protected routes */}
         <Route
           path="/*"
@@ -70,11 +72,7 @@ const App = () => {
                         </ProtectedRoute>
                       }
                     />
-                    <Route path="/forget" element={
-                      <ProtectedRoute>
-                      <ForgetPass/>
-                      </ProtectedRoute>
-                      }/>
+                 
                   </Routes>
                 </div>
               </div>

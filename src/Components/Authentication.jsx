@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Authentication = () => {
@@ -94,10 +95,27 @@ const Authentication = () => {
             className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 pr-12"
             required
         />
+        <div className="flex justify-between items-center">
+  <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
+  >
+    {showPassword ? "🔒" : "👀"}
+  </button>
+  {isLogin && (
+    <Link to='/forget'
+      href="/forgot-password" // replace with your actual route
+      className="text-sm text-blue-500 hover:underline ml-auto"
+    >
+      Forgot Password?
+    </Link>
+  )}
+</div>
         <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
         >
             {showPassword ? "🔒" : "👀"}
         </button>
@@ -105,7 +123,7 @@ const Authentication = () => {
 
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+            className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition cursor-pointer"
           >
             {isLogin ? "Login" : "Register"}
           </button>
