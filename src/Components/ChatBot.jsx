@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 const ChatBot = () => {
+const msg=JSON.parse(localStorage.getItem("message")) || []
   const [userInput, setUserInput] = useState({
     message:''
   });
-  const [messages, setMessages] = useState([]); // chat messages
+  const [messages, setMessages] = useState(msg); // chat messages
   const chatEndRef = useRef(null);
-  
+  useEffect(() => {
+    localStorage.setItem("message", JSON.stringify(messages));
+  }, [messages]);
   // Scroll to bottom on new message
   useEffect(() => {
     
@@ -34,8 +37,8 @@ const ChatBot = () => {
 
       if (response.ok) {
         const res = await response.json(); // e.g., "Added 400 on Food"
-        
         setMessages((prev) => [...prev, { sender: 'bot', text: res.message }]);
+       
         
       }
     } catch (err) {

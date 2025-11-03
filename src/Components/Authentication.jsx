@@ -48,7 +48,7 @@ const Authentication = () => {
 }, 1500);
        
       } else {
-        toast.success(data.message || "Error occurred");
+        toast.error(data.message || "Error occurred");
       }
     } catch (err) {
       console.error(err);

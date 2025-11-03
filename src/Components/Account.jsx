@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import {Link} from 'react-router-dom'
 const Account = () => {
   const storedUserId = localStorage.getItem("userId"); // get logged-in user ID
   const [user, setUser] = useState(null);
@@ -8,7 +8,7 @@ const Account = () => {
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const[showModal,setShowModal]=useState(false)
   // Fetch user data
   useEffect(() => {
     if (!storedUserId) return setLoading(false);
@@ -92,6 +92,9 @@ const Account = () => {
       <div className="bg-white p-6 rounded-lg shadow-md text-center max-w-md mx-auto mt-10">
         <h2 className="text-xl font-semibold mb-4">Account</h2>
         <p>You are not logged in.</p>
+        <br />
+      
+        <Link to='/auth' className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition cursor-pointer m-5" style={{textDecoration:'none'}}>Please Login</Link>
       </div>
     );
   }
@@ -164,11 +167,47 @@ const Account = () => {
             Edit
           </button>
           <button
-            onClick={handleLogout}
+            onClick={()=>setShowModal(!showModal)}
             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition cursor-pointer"
           >
             Logout
           </button>
+        </div>
+      )}
+      {/* Tailwind Modal */}
+      {showModal && (
+       <div className="fixed inset-0 bg-white/50 backdrop-blur-md flex items-center justify-center z-50">
+
+          <div className="bg-white rounded-lg shadow-lg w-96">
+            <div className="border-b px-6 py-3 flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-gray-800">
+                Confirm Delete
+              </h2>
+              <button
+                className="text-gray-500 hover:text-gray-700 cursor-pointer"
+                onClick={() => setShowModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 text-gray-700 ">
+              Are you sure to logout ?
+            </div>
+            <div className="border-t px-6 py-3 flex justify-end gap-3">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
