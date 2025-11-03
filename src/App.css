@@ -50,7 +50,7 @@ table {
 @media (max-width: 480px) {
   .chatbot-container {
     width: 100% !important;
-    height: 100vh !important;
+    height: 60vh !important;
     border-radius: 0 !important;
   }
 }

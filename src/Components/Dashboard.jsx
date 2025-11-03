@@ -4,9 +4,11 @@ import BarChart from "./BarChart";
 import { toast } from "react-toastify";
 
 const Dashboard = () => {
+  const budgetData=JSON.parse(localStorage.getItem("budget"))|| 0
   const [showModal, setShowModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [expenses, setExpenses] = useState([]);
+  const [budget, setBudget] = useState(budgetData);
   const userId = localStorage.getItem("userId");
 
   // Fetch all expenses
@@ -16,7 +18,9 @@ const Dashboard = () => {
       .then((msg) => setExpenses(msg.data))
       .catch((err) => console.log(err));
   }, []);
-
+useEffect(()=>{
+  localStorage.setItem("budget",JSON.stringify(budget))
+},[budget])
   // Aggregate by category
   const getCategorySummary = (expenses) => {
     const summary = {};
@@ -48,13 +52,50 @@ const Dashboard = () => {
       setDeleteId(null);
     }
   };
-
+const amount=amounts.reduce((amount, e) => amount + e, 0)
   return (
     <div className="bg-gray-100 min-h-screen font-sans p-6">
       <div className="bg-white shadow-xl rounded-lg p-6 md:p-10 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">
           Smart Expense Tracker Dashboard
         </h1>
+
+        {/* 💰 Total and Budget Summary Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          {/* Total Expenses Card */}
+          <div className=" bg-gradient-to-r from-green-400 to-emerald-500 text-white p-6 rounded-2xl shadow-lg hover:scale-[1.02] transition-transform duration-300">
+            <p className="text-lg font-medium">Total Expenses</p>
+            <p className="text-4xl font-bold mt-2">
+              ₹{amount}
+            </p>
+            
+          </div>
+
+          {/* Budget Card */}
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg hover:scale-[1.02] transition-transform duration-300">
+            <div className="flex justify-between items-center mb-3">
+              <p className="text-lg font-medium">Your Budget</p>
+              <input
+                type="number"
+                value={budget}
+                onChange={(e) => {
+                  setBudget(e.target.value)
+                }}
+                className="bg-white text-gray-800 rounded-md px-3 py-1 text-sm outline-none w-28"
+                placeholder="Enter ₹"
+              />
+            </div>
+            
+            <p className="text-4xl font-bold">₹{budget || 0}</p>
+            <div>
+            <p className="text-lg font-medium">Remaining amount</p>
+            <p className="text-4xl font-bold mt-2">
+              ₹{budget-amount}
+            </p>
+            </div>
+          </div>
+          
+        </div>
 
         {/* Expenses Table */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -87,7 +128,10 @@ const Dashboard = () => {
                     expenses.map((exp, index) => (
                       <tr key={index}>
                         <td className="px-6 py-4 text-sm text-gray-800">
-                          {exp.item&&exp.item.replace(/\b\w/g, char => char.toUpperCase())}
+                          {exp.item &&
+                            exp.item.replace(/\b\w/g, (char) =>
+                              char.toUpperCase()
+                            )}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800">
                           {exp.category}
@@ -122,7 +166,7 @@ const Dashboard = () => {
             <h2 className="text-xl font-semibold mb-4 text-gray-700">
               Category-wise Spending
             </h2>
-            <div className="bg-gray-50 rounded-lg p-4 h-48 flex justify-center items-center">
+            <div className="bg-gray-50 rounded-lg p-4 h-60 flex justify-center items-center">
               <PieChart amounts={amounts} categories={categories} />
             </div>
 
@@ -136,10 +180,9 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Tailwind Modal */}
+      {/* Delete Modal */}
       {showModal && (
-       <div className="fixed inset-0 bg-white/50 backdrop-blur-md flex items-center justify-center z-50">
-
+        <div className="fixed inset-0 bg-white/50 backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg w-96">
             <div className="border-b px-6 py-3 flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-800">
@@ -152,7 +195,7 @@ const Dashboard = () => {
                 ✕
               </button>
             </div>
-            <div className="p-6 text-gray-700 ">
+            <div className="p-6 text-gray-700">
               Are you sure you want to delete this expense?
             </div>
             <div className="border-t px-6 py-3 flex justify-end gap-3">
