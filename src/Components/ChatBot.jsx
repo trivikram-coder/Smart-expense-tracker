@@ -1,14 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 const ChatBot = () => {
-  const msg = JSON.parse(localStorage.getItem("message")) || [];
+  const userId=(localStorage.getItem("userId"))
+  const msg = JSON.parse(localStorage.getItem(`message${userId}`)) || [];
   const [userInput, setUserInput] = useState({ message: '' });
   const [messages, setMessages] = useState(msg);
   const chatEndRef = useRef(null);
-
+console.log(userId)
   // ✅ Save chats to localStorage
   useEffect(() => {
-    localStorage.setItem("message", JSON.stringify(messages));
+    localStorage.setItem(`message${userId}`, JSON.stringify(messages));
   }, [messages]);
 
   // ✅ Auto scroll on new message
@@ -110,7 +111,7 @@ const ChatBot = () => {
                   <div
                     className={`max-w-[70%] px-4 py-2 rounded-2xl text-sm break-words ${
                       msg.sender === 'user'
-                        ? 'bg-green-500 text-white rounded-tr-sm'
+                        ? 'bg-green-500 text-white rounded-tr-sm mb-2'
                         : 'bg-gray-200 text-gray-800 rounded-tl-sm'
                     }`}
                   >

@@ -4,11 +4,11 @@ import BarChart from "./BarChart";
 import { toast } from "react-toastify";
 
 const Dashboard = () => {
-  const budgetData=JSON.parse(localStorage.getItem("budget"))|| 0
+  const savedBudget = JSON.parse(localStorage.getItem("budget")) || 0;
   const [showModal, setShowModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [expenses, setExpenses] = useState([]);
-  const [budget, setBudget] = useState(budgetData);
+  const [budget, setBudget] = useState(savedBudget);
   const userId = localStorage.getItem("userId");
 
   // Fetch all expenses
@@ -17,10 +17,13 @@ const Dashboard = () => {
       .then((res) => res.json())
       .then((msg) => setExpenses(msg.data))
       .catch((err) => console.log(err));
-  }, []);
-useEffect(()=>{
-  localStorage.setItem("budget",JSON.stringify(budget))
-},[budget])
+  }, [userId]);
+
+  // Save budget to localStorage
+  useEffect(() => {
+    localStorage.setItem("budget", JSON.stringify(budget));
+  }, [budget]);
+
   // Aggregate by category
   const getCategorySummary = (expenses) => {
     const summary = {};
@@ -52,7 +55,23 @@ useEffect(()=>{
       setDeleteId(null);
     }
   };
-const amount=amounts.reduce((amount, e) => amount + e, 0)
+
+  // Budget Limit Check
+  function checkLimit() {
+    const totalAmount = amounts.reduce((sum, e) => sum + e, 0);
+    if (totalAmount > budget) {
+      
+      return null; // stop further logic
+    }
+    return totalAmount;
+  }
+
+  const totalExpense = checkLimit();
+  const remaining =
+    totalExpense === null
+      ? "Exceeded"
+      : Math.max(budget - totalExpense, 0); // prevent negative display
+
   return (
     <div className="bg-gray-100 min-h-screen font-sans p-6">
       <div className="bg-white shadow-xl rounded-lg p-6 md:p-10 max-w-7xl mx-auto">
@@ -63,12 +82,11 @@ const amount=amounts.reduce((amount, e) => amount + e, 0)
         {/* 💰 Total and Budget Summary Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
           {/* Total Expenses Card */}
-          <div className=" bg-gradient-to-r from-green-400 to-emerald-500 text-white p-6 rounded-2xl shadow-lg hover:scale-[1.02] transition-transform duration-300">
+          <div className="bg-gradient-to-r from-green-400 to-emerald-500 text-white p-6 rounded-2xl shadow-lg hover:scale-[1.02] transition-transform duration-300">
             <p className="text-lg font-medium">Total Expenses</p>
             <p className="text-4xl font-bold mt-2">
-              ₹{amount}
+              ₹{totalExpense === null ? "Exceeded" : totalExpense}
             </p>
-            
           </div>
 
           {/* Budget Card */}
@@ -78,23 +96,25 @@ const amount=amounts.reduce((amount, e) => amount + e, 0)
               <input
                 type="number"
                 value={budget}
-                onChange={(e) => {
-                  setBudget(e.target.value)
-                }}
+                onChange={(e) => setBudget(Number(e.target.value))}
                 className="bg-white text-gray-800 rounded-md px-3 py-1 text-sm outline-none w-28"
                 placeholder="Enter ₹"
               />
             </div>
-            
+
             <p className="text-4xl font-bold">₹{budget || 0}</p>
-            <div>
-            <p className="text-lg font-medium">Remaining amount</p>
-            <p className="text-4xl font-bold mt-2">
-              ₹{budget-amount}
-            </p>
+
+            <div className="mt-4">
+              <p className="text-lg font-medium">Remaining Amount</p>
+              <p
+                className={`text-4xl font-bold mt-2 ${
+                  remaining === "Exceeded" ? "text-red-400" : ""
+                }`}
+              >
+                {remaining === "Exceeded" ? remaining : `₹${remaining}`}
+              </p>
             </div>
           </div>
-          
         </div>
 
         {/* Expenses Table */}
