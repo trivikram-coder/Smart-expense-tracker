@@ -87,7 +87,7 @@ const Dashboard = () => {
                     expenses.map((exp, index) => (
                       <tr key={index}>
                         <td className="px-6 py-4 text-sm text-gray-800">
-                          ₹{exp.item&&exp.item.replace(/\b\w/g, char => char.toUpperCase())}
+                          {exp.item&&exp.item.replace(/\b\w/g, char => char.toUpperCase())}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800">
                           {exp.category}
