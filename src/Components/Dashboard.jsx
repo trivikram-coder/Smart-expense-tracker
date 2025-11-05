@@ -73,14 +73,16 @@ const Dashboard = () => {
       : Math.max(budget - totalExpense, 0); // prevent negative display
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans p-6">
-      <div className="bg-white shadow-xl rounded-lg p-6 md:p-10 max-w-7xl mx-auto">
+    <div className="bg-gray-100 min-h-screen font-sans p-4 md:p-6">
+  <div className="bg-white shadow-xl rounded-lg p-4 sm:p-6 md:p-10 max-w-7xl mx-auto dashboard-container">
+
         <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">
           Smart Expense Tracker Dashboard
         </h1>
 
         {/* 💰 Total and Budget Summary Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 dashboard-cards">
+
           {/* Total Expenses Card */}
           <div className="bg-gradient-to-r from-green-400 to-emerald-500 text-white p-6 rounded-2xl shadow-lg hover:scale-[1.02] transition-transform duration-300">
             <p className="text-lg font-medium">Total Expenses</p>
@@ -111,6 +113,7 @@ const Dashboard = () => {
                   remaining === "Exceeded" ? "text-red-400" : ""
                 }`}
               >
+
                 {remaining === "Exceeded" ? remaining : `₹${remaining}`}
               </p>
             </div>
@@ -123,8 +126,9 @@ const Dashboard = () => {
             <h2 className="text-xl font-semibold mb-4 text-gray-700">
               Recent Expenses
             </h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-200 rounded-md">
+           <div className="overflow-x-auto table-container">
+  <table className="min-w-full bg-white border border-gray-200 rounded-md text-sm md:text-base dashboard-table">
+
                 <thead>
                   <tr className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <th className="px-6 py-6">Name</th>

@@ -68,3 +68,92 @@ table {
     padding: 0.6rem !important;
   }
 }
+/* global.css */
+
+/* Prevent horizontal overflow */
+body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* ✅ Sidebar mobile fix */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    height: 100%;
+    width: 70%;
+    max-width: 240px;
+    background: #1f2937;
+    z-index: 50;
+    transition: left 0.3s ease-in-out;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+}
+
+/* ✅ Make tables scrollable */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  min-width: 600px;
+  width: 100%;
+}
+
+/* ✅ Chart height on smaller screens */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 220px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    height: 160px !important;
+  }
+}
+
+/* ✅ ChatBot */
+@media (max-width: 480px) {
+  .chatbot-container {
+    width: 100% !important;
+    height: 75vh !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* ✅ Account Page */
+@media (max-width: 480px) {
+  .account-container {
+    width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  .account-container input,
+  .account-container button {
+    font-size: 0.9rem !important;
+    padding: 0.6rem !important;
+  }
+}
+
+/* ✅ Dashboard cards & table */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem !important;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-table {
+    font-size: 0.9rem;
+  }
+}

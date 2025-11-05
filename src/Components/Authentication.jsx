@@ -57,7 +57,8 @@ const Authentication = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+   <div className="account-container bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-md mx-auto">
+
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">
           {isLogin ? "Login" : "Register"}

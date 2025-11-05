@@ -89,7 +89,8 @@ const Account = () => {
 
   if (!user) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md text-center max-w-md mx-auto mt-10">
+      <div className="account-container bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-md mx-auto">
+
         <h2 className="text-xl font-semibold mb-4">Account</h2>
         <p>You are not logged in.</p>
         <br />

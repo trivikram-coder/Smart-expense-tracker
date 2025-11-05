@@ -78,7 +78,7 @@ console.log(userId)
   const grouped = groupMessagesByDate(messages);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div className="chatbot-container min-h-screen flex items-center justify-center bg-gray-100 p-2 sm:p-4">
       <div className="flex flex-col w-full max-w-md h-[80vh] bg-white rounded-2xl shadow-lg overflow-hidden">
         
         {/* Header */}
