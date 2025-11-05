@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const ChatBot = () => {
   const userId = localStorage.getItem("userId");
@@ -86,7 +87,19 @@ const ChatBot = () => {
       return groups;
     }, {});
   };
-
+const deleteMsg=async()=>{
+  try {
+    const delMsg=await fetch("http://localhost:3000/apis/msgs/delete",{
+      method:"DELETE",
+      body:JSON.stringify(userId)
+    })
+    if(delMsg.status===200){
+      setMessages([])
+    }
+  } catch (error) {
+    console.log("Something went wrong")
+  }
+}
   const grouped = groupMessagesByDate(messages);
 
   return (
@@ -151,7 +164,7 @@ const ChatBot = () => {
             className="bg-red-500 text-white px-3 sm:px-5 py-2 rounded-full font-semibold hover:bg-red-600 transition cursor-pointer text-sm"
             onClick={() => {
               setMessages([]);
-              localStorage.removeItem(`message${userId}`);
+              deleteMsg();
             }}
           >
             Clear
