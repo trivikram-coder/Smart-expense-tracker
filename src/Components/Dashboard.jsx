@@ -102,8 +102,8 @@ const savedBudget =
               <p className="text-lg font-medium">Your Budget</p>
               <input
                 type="number"
-                
-                onChange={(e) => setBudget(Number(e.target.value))}
+                value={budget}
+                onChange={(e) => setBudget((e.target.value))}
                 className="bg-white text-gray-800 rounded-md px-3 py-1 text-sm outline-none w-30"
                 placeholder="Enter ₹"
               />
