@@ -4,12 +4,17 @@ import BarChart from "./BarChart";
 import { toast } from "react-toastify";
 
 const Dashboard = () => {
-  const savedBudget = JSON.parse(localStorage.getItem("budget")) || 0;
+  const userId = localStorage.getItem("userId") || "guest";
+  const storedBudget = localStorage.getItem(`budget${userId}`);
+const savedBudget =
+  storedBudget && storedBudget !== "undefined"
+    ? JSON.parse(storedBudget)
+    : 0;
+
   const [showModal, setShowModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [expenses, setExpenses] = useState([]);
   const [budget, setBudget] = useState(savedBudget);
-  const userId = localStorage.getItem("userId");
 
   // Fetch all expenses
   useEffect(() => {
@@ -21,7 +26,7 @@ const Dashboard = () => {
 
   // Save budget to localStorage
   useEffect(() => {
-    localStorage.setItem("budget", JSON.stringify(budget));
+    localStorage.setItem(`budget${userId}`, JSON.stringify(budget));
   }, [budget]);
 
   // Aggregate by category
@@ -97,9 +102,9 @@ const Dashboard = () => {
               <p className="text-lg font-medium">Your Budget</p>
               <input
                 type="number"
-                value={budget}
+                
                 onChange={(e) => setBudget(Number(e.target.value))}
-                className="bg-white text-gray-800 rounded-md px-3 py-1 text-sm outline-none w-28"
+                className="bg-white text-gray-800 rounded-md px-3 py-1 text-sm outline-none w-30"
                 placeholder="Enter ₹"
               />
             </div>

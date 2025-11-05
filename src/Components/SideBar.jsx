@@ -21,7 +21,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         <h2 className="text-2xl font-bold p-4 border-b border-gray-700 flex justify-between items-center">
-          Smart Expense App
+          Smart Expense Tracker App
           {/* Close button on mobile */}
           <button
             onClick={toggleSidebar}
