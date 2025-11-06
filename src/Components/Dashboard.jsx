@@ -5,16 +5,11 @@ import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const userId = localStorage.getItem("userId") || "guest";
-  const storedBudget = localStorage.getItem(`budget${userId}`);
-const savedBudget =
-  storedBudget && storedBudget !== "undefined"
-    ? JSON.parse(storedBudget)
-    : 0;
-
+ 
   const [showModal, setShowModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [expenses, setExpenses] = useState([]);
-  const [budget, setBudget] = useState(savedBudget);
+  const [budget, setBudget] = useState(0);
 
   // Fetch all expenses
   useEffect(() => {
@@ -24,11 +19,13 @@ const savedBudget =
       .catch((err) => console.log(err));
   }, [userId]);
 
-  // Save budget to localStorage
-  useEffect(() => {
-    localStorage.setItem(`budget${userId}`, JSON.stringify(budget));
-  }, [budget]);
-
+  
+  useEffect(()=>{
+    fetch(`https://smart-expense-tracker-server-1.onrender.com/budget/read/${userId}`)
+    .then(res=>res.json())
+    .then(data=>setBudget(data.data.budget))
+    .catch(err=>console.log(err))
+  },[])
   // Aggregate by category
   const getCategorySummary = (expenses) => {
     const summary = {};
@@ -60,7 +57,21 @@ const savedBudget =
       setDeleteId(null);
     }
   };
-
+async function handleBudget(e){
+  const newBudget=Number(e.target.value)
+  setBudget(newBudget)
+      try {
+        const res=await fetch("https://smart-expense-tracker-server-1.onrender.com/budget/add",{
+          method:"POST",
+          headers:{
+            "content-type":"application/json"
+          },
+          body:JSON.stringify({userId:userId,budget:newBudget})
+        })
+      } catch (error) {
+        
+      }
+}
   // Budget Limit Check
   function checkLimit() {
     const totalAmount = amounts.reduce((sum, e) => sum + e, 0);
@@ -103,7 +114,7 @@ const savedBudget =
               <input
                 type="number"
                 value={budget}
-                onChange={(e) => setBudget((e.target.value))}
+                onChange={handleBudget}
                 className="bg-white text-gray-800 rounded-md px-3 py-1 text-sm outline-none w-30"
                 placeholder="Enter ₹"
               />
