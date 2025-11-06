@@ -142,63 +142,70 @@ async function handleBudget(e){
             <h2 className="text-xl font-semibold mb-4 text-gray-700">
               Recent Expenses
             </h2>
-           <div className="overflow-x-auto table-container">
-  <table className="min-w-full bg-white border border-gray-200 rounded-md text-sm md:text-base dashboard-table">
+           <div className="overflow-x-auto w-full">
+  <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
+    <thead className="bg-gray-50 text-gray-600 text-xs sm:text-sm uppercase">
+      <tr>
+        <th className="px-4 py-3 text-left">Name</th>
+        <th className="px-4 py-3 text-left">Category</th>
+        <th className="px-4 py-3 text-left">Amount</th>
+        <th className="px-4 py-3 text-left hidden sm:table-cell">Date</th>
+        <th className="px-4 py-3 text-left hidden sm:table-cell">Action</th>
+      </tr>
+    </thead>
+    <tbody className="divide-y divide-gray-100 text-sm sm:text-base">
+      {expenses.length === 0 ? (
+        <tr>
+          <td colSpan={5} className="text-center py-4 text-gray-400">
+            No expenses yet
+          </td>
+        </tr>
+      ) : (
+        expenses.map((exp, index) => (
+          <tr
+            key={index}
+            className="hover:bg-gray-50 transition relative group"
+          >
+            <td className="px-4 py-3">{exp.item}</td>
+            <td className="px-4 py-3">{exp.category}</td>
+            <td className="px-4 py-3">₹{exp.amount}</td>
+            <td className="px-4 py-3 hidden sm:table-cell">
+              {new Date(exp.date).toLocaleDateString()}
+            </td>
 
-                <thead>
-                  <tr className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <th className="px-6 py-6">Name</th>
-                    <th className="px-6 py-3">Category</th>
-                    <th className="px-6 py-3">Amount</th>
-                    <th className="px-6 py-3">Date</th>
-                    <th className="px-6 py-3">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {expenses.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="px-6 py-4 text-center text-gray-400"
-                      >
-                        No expenses yet
-                      </td>
-                    </tr>
-                  ) : (
-                    expenses.map((exp, index) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4 text-sm text-gray-800">
-                          {exp.item &&
-                            exp.item.replace(/\b\w/g, (char) =>
-                              char.toUpperCase()
-                            )}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800">
-                          {exp.category}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800">
-                          ₹{exp.amount}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800">
-                          {new Date(exp.date).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 text-right text-sm font-medium">
-                          <button
-                            onClick={() => {
-                              setDeleteId(exp._id);
-                              setShowModal(true);
-                            }}
-                            className="text-red-600 hover:text-red-900 cursor-pointer"
-                          >
-                            ❌
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+            {/* ❌ Desktop delete icon */}
+            <td className="px-4 py-3 hidden sm:table-cell">
+              <button
+                onClick={() => {
+                  setDeleteId(exp._id);
+                  setShowModal(true);
+                }}
+                className="text-red-600 hover:text-red-900"
+              >
+                ❌
+              </button>
+            </td>
+
+            {/* 📱 Mobile delete button (appears below row) */}
+            <td className="px-4 py-2 sm:hidden">
+              <button
+                onClick={() => {
+                  setDeleteId(exp._id);
+                  setShowModal(true);
+                }}
+                className="mt-2 bg-red-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-red-600 cursor-pointer"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))
+      )}
+    </tbody>
+  </table>
+</div>
+
+
           </div>
 
           {/* Charts */}
