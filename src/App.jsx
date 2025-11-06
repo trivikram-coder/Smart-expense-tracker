@@ -14,7 +14,7 @@ const isLoggedIn = () => !!localStorage.getItem("userId");
 const ProtectedRoute = ({ children }) => {
   return isLoggedIn() ? children : <Navigate to="/auth" replace />;
 };
-
+const isMobile = window.innerWidth <= 768;
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -22,7 +22,18 @@ const App = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={2000} theme="light" />
+       <ToastContainer
+        position={isMobile ? "bottom-center" : "top-right"}
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Router>
         <Routes>
           <Route path="/auth" element={<Authentication />} />
