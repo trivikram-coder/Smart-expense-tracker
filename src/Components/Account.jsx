@@ -16,7 +16,7 @@ const Account = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`https://smart-expense-tracker-server-1.onrender.com/auth/user/${storedUserId}`);
+        const res = await fetch(`https://smart-expense-tracker-server-2.onrender.com/auth/user/${storedUserId}`);
         if (res.ok) {
           const data = await res.json();
           setUser(data);
@@ -57,7 +57,7 @@ const Account = () => {
     }
 
     try {
-      const res = await fetch(`https://smart-expense-tracker-server-1.onrender.com/auth/user/${storedUserId}`, {
+      const res = await fetch(`https://smart-expense-tracker-server-2.onrender.com/auth/user/${storedUserId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

@@ -26,7 +26,7 @@ console.log(storedUserId)
         }
 
         try {
-            const response = await fetch(`https://smart-expense-tracker-server-1.onrender.com/auth/user/${storedUserId}/password`, {
+            const response = await fetch(`https://smart-expense-tracker-server-2.onrender.com/auth/user/${storedUserId}/password`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"

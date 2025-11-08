@@ -13,15 +13,14 @@ const Dashboard = () => {
 
   // Fetch all expenses
   useEffect(() => {
-    fetch(`https://smart-expense-tracker-server-1.onrender.com/apis/read?userId=${userId}`)
+    fetch(`https://smart-expense-tracker-server-2.onrender.com/expenses/read?userId=${userId}`)
       .then((res) => res.json())
       .then((msg) => setExpenses(msg.data))
       .catch((err) => console.log(err));
   }, [userId]);
 
-  
   useEffect(()=>{
-    fetch(`https://smart-expense-tracker-server-1.onrender.com/budget/read/${userId}`)
+    fetch(`https://smart-expense-tracker-server-2.onrender.com/budget/read/${userId}`)
     .then(res=>res.json())
     .then(data=>setBudget(data.data.budget))
     .catch(err=>console.log(err))
@@ -42,7 +41,7 @@ const Dashboard = () => {
   // Delete expense
   const handleDelete = async () => {
     try {
-      await fetch(`https://smart-expense-tracker-server-1.onrender.com/apis/remove/${deleteId}`, {
+      await fetch(`https://smart-expense-tracker-server-2.onrender.com/expenses/remove/${deleteId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId }),
@@ -61,7 +60,7 @@ async function handleBudget(e){
   const newBudget=Number(e.target.value)
   setBudget(newBudget)
       try {
-        const res=await fetch("https://smart-expense-tracker-server-1.onrender.com/budget/add",{
+        const res=await fetch("https://smart-expense-tracker-server-2.onrender.com/budget/add",{
           method:"POST",
           headers:{
             "content-type":"application/json"
@@ -166,7 +165,7 @@ async function handleBudget(e){
             key={index}
             className="hover:bg-gray-50 transition relative group"
           >
-            <td className="px-4 py-3">{exp.item}</td>
+            <td className="px-4 py-3">{exp.item.charAt(0).toUpperCase() + exp.item.slice(1).toLowerCase()}</td>
             <td className="px-4 py-3">{exp.category}</td>
             <td className="px-4 py-3">₹{exp.amount}</td>
             <td className="px-4 py-3 hidden sm:table-cell">
@@ -180,7 +179,7 @@ async function handleBudget(e){
                   setDeleteId(exp._id);
                   setShowModal(true);
                 }}
-                className="text-red-600 hover:text-red-900"
+                className="text-red-600 hover:text-red-900 cursor-pointer"
               >
                 ❌
               </button>

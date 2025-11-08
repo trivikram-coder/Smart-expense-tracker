@@ -20,8 +20,8 @@ const Authentication = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = isLogin
-      ? "https://smart-expense-tracker-server-1.onrender.com/auth/login"
-      : "https://smart-expense-tracker-server-1.onrender.com/auth/register";
+      ? "https://smart-expense-tracker-server-2.onrender.com/auth/login"
+      : "https://smart-expense-tracker-server-2.onrender.com/auth/register";
 
     const bodyData = isLogin
       ? { email: formData.email, password: formData.password }

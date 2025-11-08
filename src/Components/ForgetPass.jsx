@@ -15,7 +15,7 @@ const ForgetPass = () => {
         }
         setShowOtp(true);
         try {
-            const response = await fetch("https://smart-expense-tracker-server-1.onrender.com/otps/sendotp", {
+            const response = await fetch("https://smart-expense-tracker-server-2.onrender.com/otps/sendotp", {
                 method: "POST",
                 headers: {
                     "content-type": "application/json"
@@ -42,7 +42,7 @@ const ForgetPass = () => {
         }
         setIsVerifying(true);
         try {
-            const response = await fetch("https://smart-expense-tracker-server-1.onrender.com/otps/validateotp", {
+            const response = await fetch("https://smart-expense-tracker-server-2.onrender.com/otps/validateotp", {
                 method: "POST",
                 headers: {
                     "content-type": "application/json"

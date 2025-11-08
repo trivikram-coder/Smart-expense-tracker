@@ -10,7 +10,7 @@ const ChatBot = () => {
   // ✅ Fetch existing messages from backend
   useEffect(() => {
     if (!userId) return;
-    fetch(`https://smart-expense-tracker-server-1.onrender.com/msgs/read?userId=${userId}`)
+    fetch(`https://smart-expense-tracker-server-2.onrender.com/message/read?userId=${userId}`)
       .then((res) => res.json())
       .then((data) => {
         const formatted = (data.data || []).map((msg) => ({
@@ -41,7 +41,7 @@ const ChatBot = () => {
     ]);
 
     try {
-      const response = await fetch("https://smart-expense-tracker-server-1.onrender.com/apis/add", {
+      const response = await fetch("https://smart-expense-tracker-server-2.onrender.com/expenses/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -89,7 +89,7 @@ const ChatBot = () => {
   };
 const deleteMsg=async()=>{
   try {
-    const delMsg=await fetch(`https://smart-expense-tracker-server-1.onrender.com/msgs/delete?userId=${userId}`,{
+    const delMsg=await fetch(`https://smart-expense-tracker-server-2.onrender.com/message/delete?userId=${userId}`,{
       method:"DELETE"
     })
     if(delMsg.status===200){
