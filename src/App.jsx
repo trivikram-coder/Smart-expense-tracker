@@ -53,7 +53,7 @@ const App = () => {
                     {/* ☰ Menu button visible only on mobile */}
                     <button
                       onClick={toggleSidebar}
-                      className="md:hidden text-2xl absolute top-4 left-4 bg-gray-800 text-white p-2 rounded cursor-pointer"
+                      className="md:hidden text-2xl fixed top-4 left-4 bg-gray-800 text-white p-2 rounded cursor-pointer"
                     >
                       ☰
                     </button>
