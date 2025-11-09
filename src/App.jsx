@@ -60,6 +60,7 @@ const App = () => {
 
                     <Routes>
                       <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                      
                       <Route
                         path="/dashboard"
                         element={
