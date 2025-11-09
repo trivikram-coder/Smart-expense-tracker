@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
-import PieChart from "./PieChart";
-import BarChart from "./BarChart";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import { toast } from "react-toastify";
+
+// ✅ Lazy load heavy components
+const PieChart = lazy(() => import("./PieChart"));
+const BarChart = lazy(() => import("./BarChart"));
 
 const Dashboard = () => {
   const userId = localStorage.getItem("userId") || "guest";
- 
+
   const [showModal, setShowModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [expenses, setExpenses] = useState([]);
@@ -19,12 +21,13 @@ const Dashboard = () => {
       .catch((err) => console.log(err));
   }, [userId]);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch(`https://smart-expense-tracker-server-2.onrender.com/budget/read/${userId}`)
-    .then(res=>res.json())
-    .then(data=>setBudget(data.data.budget))
-    .catch(err=>console.log(err))
-  },[])
+      .then((res) => res.json())
+      .then((data) => setBudget(data.data.budget))
+      .catch((err) => console.log(err));
+  }, [userId]);
+
   // Aggregate by category
   const getCategorySummary = (expenses) => {
     const summary = {};
@@ -56,26 +59,27 @@ const Dashboard = () => {
       setDeleteId(null);
     }
   };
-async function handleBudget(e){
-  const newBudget=Number(e.target.value)
-  setBudget(newBudget)
-      try {
-        const res=await fetch("https://smart-expense-tracker-server-2.onrender.com/budget/add",{
-          method:"POST",
-          headers:{
-            "content-type":"application/json"
-          },
-          body:JSON.stringify({userId:userId,budget:newBudget})
-        })
-      } catch (error) {
-        
-      }
-}
+
+  async function handleBudget(e) {
+    const newBudget = Number(e.target.value);
+    setBudget(newBudget);
+    try {
+      await fetch("https://smart-expense-tracker-server-2.onrender.com/budget/add", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ userId: userId, budget: newBudget }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   // Budget Limit Check
   function checkLimit() {
     const totalAmount = amounts.reduce((sum, e) => sum + e, 0);
     if (totalAmount > budget) {
-      
       return null; // stop further logic
     }
     return totalAmount;
@@ -85,19 +89,17 @@ async function handleBudget(e){
   const remaining =
     totalExpense === null
       ? "Exceeded"
-      : Math.max(budget - totalExpense, 0); // prevent negative display
+      : Math.max(budget - totalExpense, 0);
 
   return (
     <div className="bg-gray-100 min-h-screen font-sans p-4 md:p-6">
-  <div className="bg-white shadow-xl rounded-lg p-4 sm:p-6 md:p-10 max-w-7xl mx-auto dashboard-container">
-
+      <div className="bg-white shadow-xl rounded-lg p-4 sm:p-6 md:p-10 max-w-7xl mx-auto dashboard-container">
         <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">
           Smart Expense Tracker Dashboard
         </h1>
 
         {/* 💰 Total and Budget Summary Section */}
-       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 dashboard-cards">
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 dashboard-cards">
           {/* Total Expenses Card */}
           <div className="bg-gradient-to-r from-green-400 to-emerald-500 text-white p-6 rounded-2xl shadow-lg hover:scale-[1.02] transition-transform duration-300">
             <p className="text-lg font-medium">Total Expenses</p>
@@ -128,7 +130,6 @@ async function handleBudget(e){
                   remaining === "Exceeded" ? "text-red-400" : ""
                 }`}
               >
-
                 {remaining === "Exceeded" ? remaining : `₹${remaining}`}
               </p>
             </div>
@@ -141,86 +142,90 @@ async function handleBudget(e){
             <h2 className="text-xl font-semibold mb-4 text-gray-700">
               Recent Expenses
             </h2>
-           <div className="overflow-x-auto w-full">
-  <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
-    <thead className="bg-gray-50 text-gray-600 text-xs sm:text-sm uppercase">
-      <tr>
-        <th className="px-4 py-3 text-left">Name</th>
-        <th className="px-4 py-3 text-left">Category</th>
-        <th className="px-4 py-3 text-left">Amount</th>
-        <th className="px-4 py-3 text-left hidden sm:table-cell">Date</th>
-        <th className="px-4 py-3 text-left hidden sm:table-cell">Action</th>
-      </tr>
-    </thead>
-    <tbody className="divide-y divide-gray-100 text-sm sm:text-base">
-      {expenses.length === 0 ? (
-        <tr>
-          <td colSpan={5} className="text-center py-4 text-gray-400">
-            No expenses yet
-          </td>
-        </tr>
-      ) : (
-        expenses.map((exp, index) => (
-          <tr
-            key={index}
-            className="hover:bg-gray-50 transition relative group"
-          >
-            <td className="px-4 py-3">{exp.item.charAt(0).toUpperCase() + exp.item.slice(1).toLowerCase()}</td>
-            <td className="px-4 py-3">{exp.category}</td>
-            <td className="px-4 py-3">₹{exp.amount}</td>
-            <td className="px-4 py-3 hidden sm:table-cell">
-              {new Date(exp.date).toLocaleDateString()}
-            </td>
+            <div className="overflow-x-auto w-full">
+              <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
+                <thead className="bg-gray-50 text-gray-600 text-xs sm:text-sm uppercase">
+                  <tr>
+                    <th className="px-4 py-3 text-left">Name</th>
+                    <th className="px-4 py-3 text-left">Category</th>
+                    <th className="px-4 py-3 text-left">Amount</th>
+                    <th className="px-4 py-3 text-left hidden sm:table-cell">Date</th>
+                    <th className="px-4 py-3 text-left hidden sm:table-cell">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-sm sm:text-base">
+                  {expenses.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="text-center py-4 text-gray-400">
+                        No expenses yet
+                      </td>
+                    </tr>
+                  ) : (
+                    expenses.map((exp, index) => (
+                      <tr
+                        key={index}
+                        className="hover:bg-gray-50 transition relative group"
+                      >
+                        <td className="px-4 py-3">
+                          {exp.item.charAt(0).toUpperCase() + exp.item.slice(1).toLowerCase()}
+                        </td>
+                        <td className="px-4 py-3">{exp.category}</td>
+                        <td className="px-4 py-3">₹{exp.amount}</td>
+                        <td className="px-4 py-3 hidden sm:table-cell">
+                          {new Date(exp.date).toLocaleDateString()}
+                        </td>
 
-            {/* ❌ Desktop delete icon */}
-            <td className="px-4 py-3 hidden sm:table-cell">
-              <button
-                onClick={() => {
-                  setDeleteId(exp._id);
-                  setShowModal(true);
-                }}
-                className="text-red-600 hover:text-red-900 cursor-pointer"
-              >
-                ❌
-              </button>
-            </td>
+                        {/* ❌ Desktop delete icon */}
+                        <td className="px-4 py-3 hidden sm:table-cell">
+                          <button
+                            onClick={() => {
+                              setDeleteId(exp._id);
+                              setShowModal(true);
+                            }}
+                            className="text-red-600 hover:text-red-900 cursor-pointer"
+                          >
+                            ❌
+                          </button>
+                        </td>
 
-            {/* 📱 Mobile delete button (appears below row) */}
-            <td className="px-4 py-2 sm:hidden">
-              <button
-                onClick={() => {
-                  setDeleteId(exp._id);
-                  setShowModal(true);
-                }}
-                className="mt-2 bg-red-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-red-600 cursor-pointer"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-        ))
-      )}
-    </tbody>
-  </table>
-</div>
-
-
+                        {/* 📱 Mobile delete button */}
+                        <td className="px-4 py-2 sm:hidden">
+                          <button
+                            onClick={() => {
+                              setDeleteId(exp._id);
+                              setShowModal(true);
+                            }}
+                            className="mt-2 bg-red-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-red-600 cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          {/* Charts */}
+          {/* 📊 Charts (Lazy Loaded) */}
           <div>
             <h2 className="text-xl font-semibold mb-4 text-gray-700">
               Category-wise Spending
             </h2>
             <div className="bg-gray-50 rounded-lg p-4 h-60 flex justify-center items-center">
-              <PieChart amounts={amounts} categories={categories} />
+              <Suspense fallback={<p>Loading Pie Chart...</p>}>
+                <PieChart amounts={amounts} categories={categories} />
+              </Suspense>
             </div>
 
             <h2 className="text-xl font-semibold mt-6 mb-4 text-gray-700">
               Category-wise Summary
             </h2>
             <div className="bg-gray-50 rounded-lg p-4 h-48 flex justify-center items-center">
-              <BarChart amounts={amounts} categories={categories} />
+              <Suspense fallback={<p>Loading Bar Chart...</p>}>
+                <BarChart amounts={amounts} categories={categories} />
+              </Suspense>
             </div>
           </div>
         </div>
