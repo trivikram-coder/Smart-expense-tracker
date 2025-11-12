@@ -50,7 +50,7 @@ const Authentication = () => {
     } else {
       // ---- REGISTER: STEP 1 → SEND OTP ----
       try {
-        const res = await fetch("http://localhost:3030/otp/send-otp", {
+        const res = await fetch("https://email-service-72rh.onrender.com/otp/send-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: formData.email }),
@@ -72,7 +72,7 @@ const Authentication = () => {
     e.preventDefault();
     try {
       const res = await fetch(
-        `http://localhost:3030/otp/verify-otp/${formData.email}`,
+        `https://email-service-72rh.onrender.com/otp/verify-otp/${formData.email}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
