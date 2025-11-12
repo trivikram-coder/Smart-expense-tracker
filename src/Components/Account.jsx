@@ -66,6 +66,7 @@ const Account = () => {
       if (res.ok) {
         const updatedUser = await res.json();
         setUser(updatedUser);
+        toast.success("Details updated successfully")
         setEditMode(false);
         setError("");
       } else {
