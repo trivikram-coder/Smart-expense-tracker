@@ -19,8 +19,9 @@ const Account = () => {
         const res = await fetch(`https://smart-expense-tracker-server-2.onrender.com/auth/user/${storedUserId}`);
         if (res.ok) {
           const data = await res.json();
-          setUser(data);
-          setFormData({ name: data.name, email: data.email });
+          const resData=data.data
+          setUser(resData);
+          setFormData({ name: resData.name, email: resData.email });
         } else {
           setUser(null);
         }
@@ -65,7 +66,7 @@ const Account = () => {
 
       if (res.ok) {
         const updatedUser = await res.json();
-        setUser(updatedUser);
+        setUser(updatedUser.data);
         toast.success("Details updated successfully")
         setEditMode(false);
         setError("");
