@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { toast } from "react-toastify";
 
-// ✅ Lazy load heavy components
+// Lazy loaded charts
 const PieChart = lazy(() => import("./PieChart"));
 const BarChart = lazy(() => import("./BarChart"));
 
@@ -10,25 +10,44 @@ const Dashboard = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const [expenses, setExpenses] = useState([]);
+
+  const [expenses, setExpenses] = useState([]);       // paginated
+  const [allExpenses, setAllExpenses] = useState([]); // FULL DATA
+
   const [budget, setBudget] = useState(0);
 
-  // Fetch all expenses
-  useEffect(() => {
-    fetch(`https://smart-expense-tracker-server-2.onrender.com/expenses/read?userId=${userId}`)
-      .then((res) => res.json())
-      .then((msg) => setExpenses(msg.data))
-      .catch((err) => console.log(err));
-  }, [userId]);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
+  const limit = 5;
+
+  // Fetch paginated + full data
   useEffect(() => {
-    fetch(`https://smart-expense-tracker-server-2.onrender.com/budget/read/${userId}`)
+    fetch(
+      `https://smart-expense-tracker-server-2.onrender.com/expenses/read?userId=${userId}&page=${page}&limit=${limit}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setExpenses(data.data);      // paginated
+        setAllExpenses(data.allData); // full list
+        setTotalCount(data.totalCount);
+      })
+      .catch((err) => console.log(err));
+  }, [userId, page]);
+
+  const totalPages = Math.ceil(totalCount / limit);
+
+  // Fetch budget
+  useEffect(() => {
+    fetch(
+      `https://smart-expense-tracker-server-2.onrender.com/budget/read/${userId}`
+    )
       .then((res) => res.json())
       .then((data) => setBudget(data.data.budget))
       .catch((err) => console.log(err));
   }, [userId]);
 
-  // Aggregate by category
+  // Category summary based on FULL DATA
   const getCategorySummary = (expenses) => {
     const summary = {};
     expenses.forEach((exp) => {
@@ -37,22 +56,30 @@ const Dashboard = () => {
     return summary;
   };
 
-  const categorySummary = getCategorySummary(expenses);
+  const categorySummary = getCategorySummary(allExpenses);
   const amounts = Object.values(categorySummary);
   const categories = Object.keys(categorySummary);
 
   // Delete expense
   const handleDelete = async () => {
     try {
-      await fetch(`https://smart-expense-tracker-server-2.onrender.com/expenses/remove/${deleteId}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
-      });
+      await fetch(
+        `https://smart-expense-tracker-server-2.onrender.com/expenses/remove/${deleteId}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        }
+      );
+
+      // Remove from paginated data
       setExpenses((prev) => prev.filter((exp) => exp._id !== deleteId));
+
+      // Remove from full expenses
+      setAllExpenses((prev) => prev.filter((exp) => exp._id !== deleteId));
+
       toast.success("Expense deleted");
     } catch (error) {
-      console.error(error);
       toast.error("Error deleting expense");
     } finally {
       setShowModal(false);
@@ -60,36 +87,29 @@ const Dashboard = () => {
     }
   };
 
+  // Update budget
   async function handleBudget(e) {
     const newBudget = Number(e.target.value);
     setBudget(newBudget);
+
     try {
-      await fetch("https://smart-expense-tracker-server-2.onrender.com/budget/add", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({ userId: userId, budget: newBudget }),
-      });
+      await fetch(
+        "https://smart-expense-tracker-server-2.onrender.com/budget/add",
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ userId: userId, budget: newBudget }),
+        }
+      );
     } catch (error) {
       console.error(error);
     }
   }
 
-  // Budget Limit Check
-  function checkLimit() {
-    const totalAmount = amounts.reduce((sum, e) => sum + e, 0);
-    if (totalAmount > budget) {
-      return null; // stop further logic
-    }
-    return totalAmount;
-  }
-
-  const totalExpense = checkLimit();
+  // Budget calculation
+  const totalExpense = allExpenses.reduce((sum, e) => sum + e.amount, 0);
   const remaining =
-    totalExpense === null
-      ? "Exceeded"
-      : Math.max(budget - totalExpense, 0);
+    totalExpense > budget ? "Exceeded" : Math.max(budget - totalExpense, 0);
 
   return (
     <div className="bg-gray-100 min-h-screen font-sans p-4 md:p-6">
@@ -98,30 +118,30 @@ const Dashboard = () => {
           Smart Expense Tracker Dashboard
         </h1>
 
-        {/* 💰 Total and Budget Summary Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 dashboard-cards">
-          {/* Total Expenses Card */}
-          <div className="bg-gradient-to-r from-green-400 to-emerald-500 text-white p-6 rounded-2xl shadow-lg hover:scale-[1.02] transition-transform duration-300">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+          {/* Total Expenses */}
+          <div className="bg-gradient-to-r from-green-400 to-emerald-500 text-white p-6 rounded-2xl shadow-lg">
             <p className="text-lg font-medium">Total Expenses</p>
             <p className="text-4xl font-bold mt-2">
               ₹{totalExpense === null ? "Exceeded" : totalExpense}
             </p>
           </div>
 
-          {/* Budget Card */}
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg hover:scale-[1.02] transition-transform duration-300">
+          {/* Budget */}
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6 rounded-2xl shadow-lg">
             <div className="flex justify-between items-center mb-3">
               <p className="text-lg font-medium">Your Budget</p>
               <input
                 type="number"
                 value={budget}
                 onChange={handleBudget}
-                className="bg-white text-gray-800 rounded-md px-3 py-1 text-sm outline-none w-30"
+                className="bg-white text-gray-800 rounded-md px-3 py-1 text-sm"
                 placeholder="Enter ₹"
               />
             </div>
 
-            <p className="text-4xl font-bold">₹{budget || 0}</p>
+            <p className="text-4xl font-bold">₹{budget}</p>
 
             <div className="mt-4">
               <p className="text-lg font-medium">Remaining Amount</p>
@@ -142,6 +162,7 @@ const Dashboard = () => {
             <h2 className="text-xl font-semibold mb-4 text-gray-700">
               Recent Expenses
             </h2>
+
             <div className="overflow-x-auto w-full">
               <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-sm">
                 <thead className="bg-gray-50 text-gray-600 text-xs sm:text-sm uppercase">
@@ -149,25 +170,31 @@ const Dashboard = () => {
                     <th className="px-4 py-3 text-left">Name</th>
                     <th className="px-4 py-3 text-left">Category</th>
                     <th className="px-4 py-3 text-left">Amount</th>
-                    <th className="px-4 py-3 text-left hidden sm:table-cell">Date</th>
-                    <th className="px-4 py-3 text-left hidden sm:table-cell">Action</th>
+                    <th className="px-4 py-3 text-left hidden sm:table-cell">
+                      Date
+                    </th>
+                    <th className="px-4 py-3 text-left hidden sm:table-cell">
+                      Action
+                    </th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-100 text-sm sm:text-base">
                   {expenses.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="text-center py-4 text-gray-400">
+                      <td
+                        colSpan={5}
+                        className="text-center py-4 text-gray-400"
+                      >
                         No expenses yet
                       </td>
                     </tr>
                   ) : (
-                    expenses.map((exp, index) => (
-                      <tr
-                        key={index}
-                        className="hover:bg-gray-50 transition relative group"
-                      >
+                    expenses.map((exp) => (
+                      <tr key={exp._id} className="hover:bg-gray-50 transition">
                         <td className="px-4 py-3">
-                          {exp.item.charAt(0).toUpperCase() + exp.item.slice(1).toLowerCase()}
+                          {exp.item.charAt(0).toUpperCase() +
+                            exp.item.slice(1).toLowerCase()}
                         </td>
                         <td className="px-4 py-3">{exp.category}</td>
                         <td className="px-4 py-3">₹{exp.amount}</td>
@@ -175,29 +202,15 @@ const Dashboard = () => {
                           {new Date(exp.date).toLocaleDateString()}
                         </td>
 
-                        {/* ❌ Desktop delete icon */}
                         <td className="px-4 py-3 hidden sm:table-cell">
                           <button
                             onClick={() => {
                               setDeleteId(exp._id);
                               setShowModal(true);
                             }}
-                            className="text-red-600 hover:text-red-900 cursor-pointer"
+                            className="text-red-600 hover:text-red-900"
                           >
                             ❌
-                          </button>
-                        </td>
-
-                        {/* 📱 Mobile delete button */}
-                        <td className="px-4 py-2 sm:hidden">
-                          <button
-                            onClick={() => {
-                              setDeleteId(exp._id);
-                              setShowModal(true);
-                            }}
-                            className="mt-2 bg-red-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-red-600 cursor-pointer"
-                          >
-                            Delete
                           </button>
                         </td>
                       </tr>
@@ -205,10 +218,33 @@ const Dashboard = () => {
                   )}
                 </tbody>
               </table>
+
+              {/* Pagination */}
+              <div className="flex justify-center items-center gap-4 mt-4">
+                <button
+                  onClick={() => setPage(page - 1)}
+                  disabled={page === 1}
+                  className="px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  ⬅ Prev
+                </button>
+
+                <span className="text-gray-700 font-semibold text-sm">
+                  Page {page} of {totalPages}
+                </span>
+
+                <button
+                  onClick={() => setPage(page + 1)}
+                  disabled={page === totalPages}
+                  className="px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Next ➡
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* 📊 Charts (Lazy Loaded) */}
+          {/* Charts */}
           <div>
             <h2 className="text-xl font-semibold mb-4 text-gray-700">
               Category-wise Spending
@@ -231,7 +267,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Delete Modal */}
+      {/* Delete Confirm Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-white/50 backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg w-96">
@@ -240,25 +276,28 @@ const Dashboard = () => {
                 Confirm Delete
               </h2>
               <button
-                className="text-gray-500 hover:text-gray-700 cursor-pointer"
+                className="text-gray-500 hover:text-gray-700"
                 onClick={() => setShowModal(false)}
               >
                 ✕
               </button>
             </div>
+
             <div className="p-6 text-gray-700">
               Are you sure you want to delete this expense?
             </div>
+
             <div className="border-t px-6 py-3 flex justify-end gap-3">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300"
               >
                 Cancel
               </button>
+
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 cursor-pointer"
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
               >
                 Yes, Delete
               </button>
