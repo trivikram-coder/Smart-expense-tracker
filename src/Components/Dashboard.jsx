@@ -28,7 +28,7 @@ const Dashboard = () => {
     )
       .then((res) => res.json())
       .then((data) => {
-        setExpenses(data.data);      // paginated
+        setExpenses(data.data);       // paginated
         setAllExpenses(data.allData); // full list
         setTotalCount(data.totalCount);
       })
@@ -48,10 +48,13 @@ const Dashboard = () => {
   }, [userId]);
 
   // Category summary based on FULL DATA
-  const getCategorySummary = (expenses) => {
+  const getCategorySummary = (expensesArr) => {
     const summary = {};
-    expenses.forEach((exp) => {
-      summary[exp.category] = (summary[exp.category] || 0) + exp.amount;
+    expensesArr.forEach((exp) => {
+      // guard for missing fields
+      const cat = exp.category || "Other";
+      const amt = Number(exp.amount) || 0;
+      summary[cat] = (summary[cat] || 0) + amt;
     });
     return summary;
   };
@@ -77,6 +80,9 @@ const Dashboard = () => {
 
       // Remove from full expenses
       setAllExpenses((prev) => prev.filter((exp) => exp._id !== deleteId));
+
+      // also adjust totalCount (optional)
+      setTotalCount((prev) => Math.max(0, prev - 1));
 
       toast.success("Expense deleted");
     } catch (error) {
@@ -107,7 +113,7 @@ const Dashboard = () => {
   }
 
   // Budget calculation
-  const totalExpense = allExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalExpense = allExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
   const remaining =
     totalExpense > budget ? "Exceeded" : Math.max(budget - totalExpense, 0);
 
@@ -170,22 +176,15 @@ const Dashboard = () => {
                     <th className="px-4 py-3 text-left">Name</th>
                     <th className="px-4 py-3 text-left">Category</th>
                     <th className="px-4 py-3 text-left">Amount</th>
-                    <th className="px-4 py-3 text-left hidden sm:table-cell">
-                      Date
-                    </th>
-                    <th className="px-4 py-3 text-left hidden sm:table-cell">
-                      Action
-                    </th>
+                    <th className="px-4 py-3 text-left hidden sm:table-cell">Date</th>
+                    <th className="px-4 py-3 text-left hidden sm:table-cell">Action</th>
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-gray-100 text-sm sm:text-base">
                   {expenses.length === 0 ? (
                     <tr>
-                      <td
-                        colSpan={5}
-                        className="text-center py-4 text-gray-400"
-                      >
+                      <td colSpan={5} className="text-center py-4 text-gray-400">
                         No expenses yet
                       </td>
                     </tr>
@@ -193,24 +192,40 @@ const Dashboard = () => {
                     expenses.map((exp) => (
                       <tr key={exp._id} className="hover:bg-gray-50 transition">
                         <td className="px-4 py-3">
-                          {exp.item.charAt(0).toUpperCase() +
-                            exp.item.slice(1).toLowerCase()}
+                          {(exp.item || "").charAt(0).toUpperCase() +
+                            (exp.item || "").slice(1).toLowerCase()}
                         </td>
                         <td className="px-4 py-3">{exp.category}</td>
                         <td className="px-4 py-3">₹{exp.amount}</td>
                         <td className="px-4 py-3 hidden sm:table-cell">
-                          {new Date(exp.date).toLocaleDateString()}
+                          {exp.date ? new Date(exp.date).toLocaleDateString() : "-"}
                         </td>
 
+                        {/* Desktop delete icon */}
                         <td className="px-4 py-3 hidden sm:table-cell">
                           <button
                             onClick={() => {
                               setDeleteId(exp._id);
                               setShowModal(true);
                             }}
-                            className="text-red-600 hover:text-red-900"
+                            className="text-red-600 hover:text-red-900 cursor-pointer"
+                            aria-label={`Delete expense ${exp.item}`}
                           >
                             ❌
+                          </button>
+                        </td>
+
+                        {/* Mobile delete button (visible only on small screens) */}
+                        <td className="px-4 py-2 sm:hidden">
+                          <button
+                            onClick={() => {
+                              setDeleteId(exp._id);
+                              setShowModal(true);
+                            }}
+                            className="cursor-pointer mt-2 bg-red-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-red-600 cursor-pointer"
+                            aria-label={`Delete expense ${exp.item}`}
+                          >
+                            Delete
                           </button>
                         </td>
                       </tr>
@@ -219,26 +234,25 @@ const Dashboard = () => {
                 </tbody>
               </table>
 
-              
             </div>
-            {/* Pagination */}
+              {/* Pagination */}
               <div className="flex justify-center items-center gap-4 mt-4">
                 <button
-                  onClick={() => setPage(page - 1)}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition disabled:opacity-40 disabled:cursor-not-allowed  cursor-pointer"
+                  className="cursor-pointer px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   ⬅ Prev
                 </button>
 
-                <span className="text-gray-700 font-semibold text-sm">
+                <span className="cursor-pointer text-gray-700 font-semibold text-sm">
                   Page {page} of {totalPages}
                 </span>
 
                 <button
-                  onClick={() => setPage(page + 1)}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="cursor-pointer px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Next ➡
                 </button>
@@ -291,14 +305,14 @@ const Dashboard = () => {
             <div className="border-t px-6 py-3 flex justify-end gap-3">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300"
+                className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 cursor-pointer"
               >
                 Cancel
               </button>
 
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 cursor-pointer"
               >
                 Yes, Delete
               </button>
