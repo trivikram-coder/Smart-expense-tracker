@@ -226,7 +226,7 @@ const Dashboard = () => {
                 <button
                   onClick={() => setPage(page - 1)}
                   disabled={page === 1}
-                  className="px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition disabled:opacity-40 disabled:cursor-not-allowed  cursor-pointer"
                 >
                   ⬅ Prev
                 </button>
@@ -238,7 +238,7 @@ const Dashboard = () => {
                 <button
                   onClick={() => setPage(page + 1)}
                   disabled={page === totalPages}
-                  className="px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-5 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   Next ➡
                 </button>
