@@ -219,7 +219,9 @@ const Dashboard = () => {
                 </tbody>
               </table>
 
-              {/* Pagination */}
+              
+            </div>
+            {/* Pagination */}
               <div className="flex justify-center items-center gap-4 mt-4">
                 <button
                   onClick={() => setPage(page - 1)}
@@ -241,7 +243,6 @@ const Dashboard = () => {
                   Next ➡
                 </button>
               </div>
-            </div>
           </div>
 
           {/* Charts */}
