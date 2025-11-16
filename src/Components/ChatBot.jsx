@@ -23,31 +23,27 @@ const ChatBot = () => {
               text: msg.message,
               date: msg.date,
             }))
-            .sort((a, b) => new Date(a.date) - new Date(b.date)); // FIXED ORDER
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
 
         setMessages(formatted);
       })
       .catch((err) => console.error("Error fetching messages:", err));
   }, [userId]);
 
-
-  // Auto-scroll to bottom
+  // Scroll to bottom
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-
-  // Handle typing
+  // Handle input
   const handleChange = (e) => setUserInput({ message: e.target.value });
 
-
   // =======================
-  // Send a message
+  // Send message
   // =======================
   const sendMessage = async () => {
     if (userInput.message.trim() === "") return;
 
-    // 🟢 Add USER message instantly
     const tempUserMsg = {
       sender: "user",
       text: userInput.message,
@@ -69,10 +65,9 @@ const ChatBot = () => {
       if (response.ok) {
         const res = await response.json();
 
-        // 🟣 ADD BOT MESSAGE — IMPORTANT FIX
         const botMsg = {
           sender: "bot",
-          text: res.message, // FIX: backend returns { message: reply }
+          text: res.message,
           date: new Date().toISOString(),
         };
 
@@ -90,12 +85,9 @@ const ChatBot = () => {
     setUserInput({ message: "" });
   };
 
-
-  // Press Enter to send
   const handleKeyPress = (e) => {
     if (e.key === "Enter") sendMessage();
   };
-
 
   // Delete all messages
   const deleteMsg = async () => {
@@ -111,7 +103,6 @@ const ChatBot = () => {
       console.log("Something went wrong");
     }
   };
-
 
   // Group messages by date
   const groupMessagesByDate = (messages) => {
@@ -130,31 +121,36 @@ const ChatBot = () => {
   const grouped = groupMessagesByDate(messages);
 
   // =======================
-  // UI
+  // UI (Mobile-Friendly)
   // =======================
   return (
     <div className="chatbot-container min-h-screen flex items-center justify-center bg-gray-100 p-2 sm:p-4">
-      <div className="flex flex-col w-full max-w-md sm:max-w-lg h-[80vh] bg-white rounded-2xl shadow-lg overflow-hidden">
-        
+
+      <div className="flex flex-col w-full max-w-md sm:max-w-lg h-[90vh] bg-white rounded-xl shadow-md overflow-hidden">
+
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 text-center bg-green-500 text-white">
-          <h1 className="text-lg sm:text-xl font-bold">Smart Expense Tracker ChatBot</h1>
+        <div className="p-3 sm:p-4 border-b border-gray-200 text-center bg-green-500 text-white">
+          <h1 className="text-base sm:text-xl font-bold">
+            Smart Expense Tracker ChatBot
+          </h1>
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 p-3 sm:p-4 overflow-y-auto flex flex-col space-y-3 bg-gray-50 w-full">
+        <div className="flex-1 p-2 sm:p-4 overflow-y-auto flex flex-col space-y-2 sm:space-y-3 bg-gray-50 w-full">
+
           {Object.keys(grouped).map((date) => (
             <div key={date}>
               <div className="text-center my-2">
-                <span className="bg-gray-300 text-gray-800 text-xs px-3 py-1 rounded-full">
+                <span className="bg-gray-300 text-gray-800 text-[10px] sm:text-xs px-2 py-1 rounded-full">
                   {date}
                 </span>
               </div>
 
               {grouped[date].map((msg, idx) => (
                 <div key={idx} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
+
                   <div
-                    className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm m-4 ${
+                    className={`max-w-[85%] sm:max-w-[75%] px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm m-2 sm:m-4 ${
                       msg.sender === "user"
                         ? "bg-green-500 text-white rounded-tr-sm"
                         : "bg-gray-200 text-gray-800 rounded-tl-sm"
@@ -166,22 +162,24 @@ const ChatBot = () => {
               ))}
             </div>
           ))}
+
           <div ref={chatEndRef} />
         </div>
 
-        {/* Input */}
-        <div className="p-3 border-t bg-white flex gap-2 items-center">
+        {/* Input Section */}
+        <div className="p-2 sm:p-3 border-t bg-white flex gap-1 sm:gap-2 items-center">
+
           <input
             type="text"
             value={userInput.message}
             onChange={handleChange}
             onKeyDown={handleKeyPress}
             placeholder="Type your expense..."
-            className="flex-1 p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="flex-1 p-2 sm:p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-400 text-sm"
           />
 
           <button
-            className="bg-red-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-600 cursor-pointer"
+            className="bg-red-500 text-white px-3 sm:px-4 py-2 rounded-full text-sm sm:text-base font-semibold hover:bg-red-600"
             onClick={deleteMsg}
           >
             Clear
@@ -189,10 +187,11 @@ const ChatBot = () => {
 
           <button
             onClick={sendMessage}
-            className="bg-green-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-green-600 cursor-pointer"
+            className="bg-green-500 text-white px-3 sm:px-4 py-2 rounded-full text-sm sm:text-base font-semibold hover:bg-green-600"
           >
             Send
           </button>
+
         </div>
       </div>
     </div>
