@@ -111,11 +111,18 @@ const Dashboard = () => {
       console.error(error);
     }
   }
-
+function checkLimit(){
+  const totalAmount= allExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+  if(totalAmount>budget){
+    return null;
+  }
+  return totalAmount;
+}
   // Budget calculation
-  const totalExpense = allExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+  const totalExpense =checkLimit();
+  
   const remaining =
-    totalExpense > budget ? "Exceeded" : Math.max(budget - totalExpense, 0);
+    totalExpense ===null ? "Exceeded" : Math.max(budget - totalExpense, 0);
 
   return (
     <div className="bg-gray-100 min-h-screen font-sans p-4 md:p-6">
