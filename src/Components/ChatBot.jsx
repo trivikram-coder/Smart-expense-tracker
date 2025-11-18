@@ -8,7 +8,7 @@ const ChatBot = () => {
   const chatEndRef = useRef(null);
 
   // =======================
-  // Fetch existing messages
+  // Fetch Messages (from DB)
   // =======================
   useEffect(() => {
     if (!userId) return;
@@ -23,31 +23,30 @@ const ChatBot = () => {
               text: msg.message,
               date: msg.date,
             }))
-            .sort((a, b) => new Date(a.date) - new Date(b.date));
+            .sort((a, b) => new Date(a.date) - new Date(b.date)); // correct order
 
         setMessages(formatted);
       })
       .catch((err) => console.error("Error fetching messages:", err));
   }, [userId]);
 
-  // Scroll to bottom
+  // Auto-scroll
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Handle input
   const handleChange = (e) => setUserInput({ message: e.target.value });
 
   // =======================
-  // Send message
+  // Send Message
   // =======================
   const sendMessage = async () => {
     if (userInput.message.trim() === "") return;
 
+    // User message (NO DATE — backend will set date)
     const tempUserMsg = {
       sender: "user",
       text: userInput.message,
-      date: new Date().toISOString(),
     };
 
     setMessages((prev) => [...prev, tempUserMsg]);
@@ -65,20 +64,20 @@ const ChatBot = () => {
       if (response.ok) {
         const res = await response.json();
 
+        // Bot response (NO DATE)
         const botMsg = {
           sender: "bot",
           text: res.message,
-          date: new Date().toISOString(),
         };
 
         setMessages((prev) => [...prev, botMsg]);
       } else {
-        throw new Error("Failed to send message");
+        throw new Error("Failed");
       }
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "⚠️ Error sending message.", date: new Date().toISOString() },
+        { sender: "bot", text: "⚠️ Error sending message." },
       ]);
     }
 
@@ -89,7 +88,9 @@ const ChatBot = () => {
     if (e.key === "Enter") sendMessage();
   };
 
-  // Delete all messages
+  // =======================
+  // Delete All Messages
+  // =======================
   const deleteMsg = async () => {
     try {
       const delMsg = await fetch(
@@ -104,10 +105,10 @@ const ChatBot = () => {
     }
   };
 
-  // Group messages by date
+  // Grouped messages
   const groupMessagesByDate = (messages) => {
     return messages.reduce((groups, msg) => {
-      const date = new Date(msg.date).toLocaleDateString("en-IN", {
+      const date = new Date(msg.date || Date.now()).toLocaleDateString("en-IN", {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -121,7 +122,7 @@ const ChatBot = () => {
   const grouped = groupMessagesByDate(messages);
 
   // =======================
-  // UI (Mobile-Friendly)
+  // UI
   // =======================
   return (
     <div className="chatbot-container min-h-screen flex items-center justify-center bg-gray-100 p-2 sm:p-4">
@@ -148,7 +149,6 @@ const ChatBot = () => {
 
               {grouped[date].map((msg, idx) => (
                 <div key={idx} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
-
                   <div
                     className={`max-w-[85%] sm:max-w-[75%] px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm m-2 sm:m-4 ${
                       msg.sender === "user"
@@ -166,7 +166,7 @@ const ChatBot = () => {
           <div ref={chatEndRef} />
         </div>
 
-        {/* Input Section */}
+        {/* Input */}
         <div className="p-2 sm:p-3 border-t bg-white flex gap-1 sm:gap-2 items-center">
 
           <input
