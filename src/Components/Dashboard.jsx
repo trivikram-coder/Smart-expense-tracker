@@ -28,20 +28,13 @@ const Dashboard = () => {
     )
       .then((res) => res.json())
       .then((data) => {
-    const sortedPaginated = [...data.data].sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
-    );
-    const sortedFull = [...data.allData].sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
-    );
-
-    setExpenses(sortedPaginated);
-    setAllExpenses(sortedFull);
-    setTotalCount(data.totalCount);
-})
-
+        setExpenses(data.data);       // paginated
+        setAllExpenses(data.allData); // full list
+        setTotalCount(data.totalCount);
+      })
       .catch((err) => console.log(err));
   }, [userId, page]);
+
   const totalPages = Math.ceil(totalCount / limit);
 
   // Fetch budget
