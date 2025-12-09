@@ -155,7 +155,7 @@ function checkLimit(){
                 type="number"
                 value={budget}
                 onChange={handleBudget}
-                className="bg-white text-gray-800 rounded-md px-3 py-1 text-sm"
+                className="bg-white text-gray-800 rounded-md px-3 py-1 text-sm sm:w-50"
                 placeholder="Enter ₹"
               />
             </div>
