@@ -141,7 +141,9 @@ const Account = () => {
       <div className="mb-2">
         <strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}
       </div>
-
+        <div className="mb-2">
+          <strong>Updated:</strong>{new Date(user.updatedAt).toLocaleDateString()}
+        </div>
       {editMode ? (
         <div className="flex gap-2 mt-4">
           <button
