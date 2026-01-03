@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { apiUrl, emailUrl } from "../services/api";
 
 const Authentication = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const Authentication = () => {
       // ---- LOGIN ----
       try {
         const res = await fetch(
-          "https://smart-expense-tracker-server-2.onrender.com/auth/login",
+          `${apiUrl}/auth/login`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -50,10 +51,13 @@ const Authentication = () => {
     } else {
       // ---- REGISTER: STEP 1 → SEND OTP ----
       try {
-        const res = await fetch("https://email-service-72rh.onrender.com/otp/send-otp", {
+        const res = await fetch(`${emailUrl}/otp/send-otp`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: formData.email }),
+          body: JSON.stringify({ email: formData.email,
+            appName:"Smart Expense Tracker",
+            type:"signup"
+           }),
         });
         const data = await res.json();
 
@@ -72,7 +76,7 @@ const Authentication = () => {
     e.preventDefault();
     try {
       const res = await fetch(
-        `https://email-service-72rh.onrender.com/otp/verify-otp/${formData.email}`,
+        `${emailUrl}/otp/verify-otp/${formData.email}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -85,7 +89,7 @@ const Authentication = () => {
       if (res.ok) {
         // ---- REGISTER USER AFTER OTP VERIFIED ----
         const res1 = await fetch(
-          "https://smart-expense-tracker-server-2.onrender.com/auth/register",
+          `${apiUrl}/auth/register`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

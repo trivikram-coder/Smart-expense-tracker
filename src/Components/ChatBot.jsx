@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
+import { apiUrl } from "../services/api";
 
 const ChatBot = () => {
   const userId = localStorage.getItem("userId");
@@ -13,7 +14,7 @@ const ChatBot = () => {
   useEffect(() => {
     if (!userId) return;
 
-    fetch(`https://smart-expense-tracker-server-2.onrender.com/message/read?userId=${userId}`)
+    fetch(`${apiUrl}/message/read?userId=${userId}`)
       .then((res) => res.json())
       .then((data) => {
         const formatted =
@@ -53,7 +54,7 @@ const ChatBot = () => {
 
     try {
       const response = await fetch(
-        "https://smart-expense-tracker-server-2.onrender.com/expenses/add",
+        `${apiUrl}/expenses/add`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -94,7 +95,7 @@ const ChatBot = () => {
   const deleteMsg = async () => {
     try {
       const delMsg = await fetch(
-        `https://smart-expense-tracker-server-2.onrender.com/message/delete?userId=${userId}`,
+        `${apiUrl}/message/delete?userId=${userId}`,
         { method: "DELETE" }
       );
       if (delMsg.status === 200) {

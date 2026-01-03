@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { apiUrl } from '../services/api';
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const ChangePassword = () => {
     }
 
     try {
-      const response = await fetch(`https://smart-expense-tracker-server-2.onrender.com/auth/reset-password`, {
+      const response = await fetch(`${apiUrl}/auth/reset-password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

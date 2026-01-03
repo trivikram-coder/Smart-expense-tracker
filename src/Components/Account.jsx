@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import {Link} from 'react-router-dom'
+import { apiUrl } from "../services/api";
 const Account = () => {
   const storedUserId = localStorage.getItem("userId"); // get logged-in user ID
   const [user, setUser] = useState(null);
@@ -16,7 +17,7 @@ const Account = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`https://smart-expense-tracker-server-2.onrender.com/auth/user/${storedUserId}`);
+        const res = await fetch(`${apiUrl}/auth/user/${storedUserId}`);
         if (res.ok) {
           const data = await res.json();
           const resData=data.data
@@ -58,7 +59,7 @@ const Account = () => {
     }
 
     try {
-      const res = await fetch(`https://smart-expense-tracker-server-2.onrender.com/auth/user/${storedUserId}`, {
+      const res = await fetch(`${apiUrl}/auth/user/${storedUserId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -141,9 +142,7 @@ const Account = () => {
       <div className="mb-2">
         <strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}
       </div>
-        <div className="mb-2">
-          <strong>Updated:</strong>{new Date(user.updatedAt).toLocaleDateString()}
-        </div>
+       
       {editMode ? (
         <div className="flex gap-2 mt-4">
           <button

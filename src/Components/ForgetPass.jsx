@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { emailUrl } from '../services/api';
 
 const ForgetPass = () => {
     const [showOtp, setShowOtp] = useState(false);
@@ -16,12 +17,16 @@ const ForgetPass = () => {
         }
 
         try {
-            const response = await fetch("https://email-service-72rh.onrender.com/otp/send-otp", {
+            const response = await fetch(`${emailUrl}/otp/send-otp`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ 
+                    appName:"Smart Expense Tracker",
+                    type:"forget",
+                    email 
+                })
             });
 
             const res = await response.json();
@@ -46,7 +51,7 @@ const ForgetPass = () => {
 
         setIsVerifying(true);
         try {
-            const response = await fetch(`https://email-service-72rh.onrender.com/otp/verify-otp/${email}`, {
+            const response = await fetch(`${emailUrl}/otp/verify-otp/${email}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { toast } from "react-toastify";
+import { apiUrl } from "../services/api";
 
 // Lazy loaded charts
 const PieChart = lazy(() => import("./PieChart"));
@@ -24,7 +25,7 @@ const Dashboard = () => {
   // Fetch paginated + full data
   useEffect(() => {
     fetch(
-      `https://smart-expense-tracker-server-2.onrender.com/expenses/read?userId=${userId}&page=${page}&limit=${limit}`
+      `${apiUrl}/expenses/read?userId=${userId}&page=${page}&limit=${limit}`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -46,7 +47,7 @@ const Dashboard = () => {
   // Fetch budget
   useEffect(() => {
     fetch(
-      `https://smart-expense-tracker-server-2.onrender.com/budget/read/${userId}`
+      `${apiUrl}/budget/read/${userId}`
     )
       .then((res) => res.json())
       .then((data) => setBudget(data.data.budget))
@@ -73,7 +74,7 @@ const Dashboard = () => {
   const handleDelete = async () => {
     try {
       await fetch(
-        `https://smart-expense-tracker-server-2.onrender.com/expenses/remove/${deleteId}`,
+        `${apiUrl}/expenses/remove/${deleteId}`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -106,7 +107,7 @@ const Dashboard = () => {
 
     try {
       await fetch(
-        "https://smart-expense-tracker-server-2.onrender.com/budget/add",
+        `${apiUrl}/budget/add`,
         {
           method: "POST",
           headers: { "content-type": "application/json" },
