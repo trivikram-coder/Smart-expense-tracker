@@ -8,6 +8,7 @@ import Authentication from "./Components/Authentication";
 import { ToastContainer } from "react-toastify";
 import ForgetPass from "./Components/ForgetPass";
 import ChangePassword from "./Components/ChangePassword";
+import OAuthSuccess from "./Components/OAuthSuccess";
 
 const isLoggedIn = () => !!localStorage.getItem("userId");
 
@@ -39,7 +40,7 @@ const App = () => {
           <Route path="/auth" element={<Authentication />} />
           <Route path="/forget" element={<ForgetPass />} />
           <Route path="/changePass" element={<ChangePassword />} />
-
+          <Route path="/oauth-success" element={<OAuthSuccess />} />
           <Route
             path="/*"
             element={

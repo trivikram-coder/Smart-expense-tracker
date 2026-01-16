@@ -201,6 +201,8 @@ const Authentication = () => {
               >
                 {isLogin ? "Register" : "Login"}
               </button>
+              <br />
+              <button ><a href={`${apiUrl}/auth/google/login`}>Continue with google</a></button>
             </p>
           </>
         ) : (
