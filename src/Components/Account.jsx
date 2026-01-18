@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom'
 import { apiUrl } from "../services/api";
 const Account = () => {
   const storedUserId = localStorage.getItem("userId"); // get logged-in user ID
+  const token=localStorage.getItem("token")
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({ name: "", email: "" });
   const [editMode, setEditMode] = useState(false);
@@ -17,7 +18,9 @@ const Account = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${apiUrl}/auth/user/${storedUserId}`);
+        const res = await fetch(`${apiUrl}/auth/user/${storedUserId}`,{
+    
+        });
         if (res.ok) {
           const data = await res.json();
           const resData=data.data
@@ -60,8 +63,11 @@ const Account = () => {
 
     try {
       const res = await fetch(`${apiUrl}/auth/user/${storedUserId}`, {
+
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          "authorization":`Bearer ${token}`
+         },
         body: JSON.stringify(formData),
       });
 

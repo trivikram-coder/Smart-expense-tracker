@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { apiUrl, emailUrl } from "../services/api";
@@ -14,7 +14,19 @@ const Authentication = () => {
     otp: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-
+  useEffect(()=>{
+    const token=localStorage.getItem("token")||""
+    if(!token) return;
+    fetch( `${apiUrl}/auth/user`,{
+      headers:{
+        "authorization": `Bearer ${token}`
+      }
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      localStorage.setItem("userId",data.user.id)
+    })
+  },[])
   // 🔹 Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,7 +53,7 @@ const Authentication = () => {
         );
         const data = await res.json();
         if (res.ok) {
-          localStorage.setItem("userId", data.user.id);
+          localStorage.setItem("token", data.token);
           toast.success("Login successful");
           setTimeout(() => (window.location.href = "/dashboard"), 1500);
         } else toast.error(data.message);
@@ -104,7 +116,7 @@ const Authentication = () => {
         const data1 = await res1.json();
         if (res1.ok) {
           toast.success("Registration successful");
-          localStorage.setItem("userId", data1.user.id);
+          localStorage.setItem("token", data1.token);
           setTimeout(() => (window.location.href = "/dashboard"), 1500);
         } else {
           toast.error(data1.message);
