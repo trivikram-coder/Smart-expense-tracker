@@ -88,7 +88,9 @@ const Account = () => {
 
   // Logout user
   const handleLogout = () => {
+    localStorage.removeItem("user")
     localStorage.removeItem("userId");
+    localStorage.removeItem("token")
     toast.success("You logged out")
      // clear stored user
     setUser(null);

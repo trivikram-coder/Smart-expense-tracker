@@ -25,6 +25,7 @@ const Authentication = () => {
     .then(res=>res.json())
     .then(data=>{
       localStorage.setItem("userId",data.user.id)
+      
     })
   },[])
   // 🔹 Handle input changes
@@ -52,11 +53,22 @@ const Authentication = () => {
           }
         );
         const data = await res.json();
-        if (res.ok) {
-          localStorage.setItem("token", data.token);
-          toast.success("Login successful");
-          navigate("/dashboard")
-        } else toast.error(data.message);
+        if (res.status === 200) {
+  localStorage.setItem("token", data.token);
+
+  // 🔥 fetch user immediately using NEW token
+  const userRes = await fetch(`${apiUrl}/auth/user`, {
+    headers: {
+      authorization: `Bearer ${data.token}`,
+    },
+  });
+
+  const userData = await userRes.json();
+  localStorage.setItem("userId", userData.user.id);
+
+  toast.success("Login successful");
+  window.location.href = "/dashboard"; // NO setTimeout
+} else toast.error(data.message);
       } catch {
         toast.error("Server error");
       }
