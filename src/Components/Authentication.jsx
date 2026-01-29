@@ -55,7 +55,7 @@ const Authentication = () => {
         if (res.ok) {
           localStorage.setItem("token", data.token);
           toast.success("Login successful");
-          setTimeout(() => (window.location.href = "/dashboard"), 1500);
+          navigate("/dashboard")
         } else toast.error(data.message);
       } catch {
         toast.error("Server error");
